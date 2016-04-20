@@ -3,9 +3,32 @@
 include('phplot-5.0.4/phplot.php');
 include('request.php');
 
-//Matriz utilizada para gerar os graficos 
+
+$feedOzonio = requestFeed(25);
+$feedNO2 = requestFeed(28);
+$feedSO2 = requestFeed(27);
+$datapoints = $feedOzonio->data[0]->datapoints;
+$datapointsNO2 = $feedNO2->data[0]->datapoints;
+$datapointsSO2 = $feedSO2->data[0]->datapoints;
+
+foreach ($datapoints as $point) {
+    $valuesOzonio[] = $point->value[0]->value;
+}
+
+foreach ($datapointsNO2 as $point) {
+    $valuesNO2[] = $point->value[0]->value;
+}
+
+foreach ($datapointsSO2 as $point) {
+    $valuesSO2[] = $point->value[0]->value;
+}
+//Matriz utilizada para gerar os graficos
 $data = array(
-  array('1', 40), array('2', 30), array('3', 20)
+  array('1/2', $feedOzonio->data[0]->currentValue->value,
+                    $feedSO2->data[0]->currentValue->value,
+                    $feedNO2->data[0]->currentValue->value),
+    array('1', $valuesOzonio[0] , $valuesSO2[0], $valuesNO2[0] ),
+    array('1 1/2', $valuesOzonio[1] , $valuesSO2[1], $valuesNO2[1] ),
 );
 #Instancia o objeto e setando o tamanho do grafico na tela
 $plot = new PHPlot(600,400);
@@ -18,7 +41,7 @@ $plot->SetDataValues($data);
 #Titulo do grafico
 $plot->SetTitle('Níveis de Poluentes');
 # Legenda, nesse caso serao tres pq o array possui 3 valores que serao apresentados
-$plot->SetLegend(array('Monoxido de Carbono'));
+$plot->SetLegend(array('Monoxido de Carbono', 'Ozonio', 'Dioxido de Enxofre'));
 # Metodos utilizados para marcar labes, necessario mas nao se aplica neste ex. (manual) :
 $plot->SetXTickLabelPos('none');
 $plot->SetXTickPos('none');
